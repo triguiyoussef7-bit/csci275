@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Calculator - EventLogic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .navbar {
+            background: rgba(0,0,0,0.1);
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar h1 { font-size: 28px; }
+        .navbar a { color: white; text-decoration: none; margin: 0 15px; font-weight: 500; }
+        .navbar a:hover { text-decoration: underline; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .calculator-box, .recommendations-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 900px) {
+            .main-content { grid-template-columns: 1fr; }
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 24px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .slider-container {
+            margin: 20px 0;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .budget-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .recommendation {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+        
+        .recommendation h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .recommendation-price {
+            color: #667eea;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .recommendation-breakdown {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .recommendation-breakdown div {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        
+        .budget-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        .status-good { background: #d1e7dd; color: #0f5132; }
+        .status-warning { background: #fff3cd; color: #856404; }
+        .status-high { background: #f8d7da; color: #842029; }
+        
+        .recommendations-box:empty::before {
+            content: "Enter your budget above to see recommendations →";
+            color: #999;
+            text-align: center;
+        }
+        
+        .back-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            margin-top: 20px;
+        }
+        
+        .back-btn:hover {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/customer/dashboard" style="color: white; text-decoration: none;"><h1 style="margin: 0;">EventLogic</h1></a>
+        <div>
+            <a href="/customer/dashboard">Dashboard</a>
+            <a href="/customer/vendors">Vendors</a>
+            <a href="/customer/budget-calculator">Budget</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="main-content">
+            <!-- LEFT SIDE: BUDGET INPUT -->
+            <div class="calculator-box">
+                <h2>💰 Budget Calculator</h2>
+                
+                <div class="form-group">
+                    <label for="totalBudget">What's your total budget?</label>
+                    <div class="slider-container">
+                        <input type="range" id="budgetSlider" min="500" max="20000" step="100" value="5000">
+                        <div class="slider-label">
+                            <span>$500</span>
+                            <span>$20,000</span>
+                        </div>
+                    </div>
+                    <input type="number" id="totalBudget" min="500" max="20000" value="5000">
+                </div>
+                
+                <div class="budget-display" id="budgetDisplay">$5,000</div>
+                
+                <div class="form-group">
+                    <label>Select Budget Distribution:</label>
+                    <button onclick="calculateBasic()">💡 Basic Package</button>
+                    <p style="text-align: center; color: #999; font-size: 12px; margin-top: 10px;">Essential services only</p>
+                </div>
+                
+                <div class="form-group">
+                    <button onclick="calculateStandard()" style="margin-top: 20px;">⭐ Standard Package</button>
+                    <p style="text-align: center; color: #999; font-size: 12px; margin-top: 10px;">Popular balanced choice</p>
+                </div>
+                
+                <div class="form-group">
+                    <button onclick="calculatePremium()" style="margin-top: 20px;">👑 Premium Package</button>
+                    <p style="text-align: center; color: #999; font-size: 12px; margin-top: 10px;">Full luxury experience</p>
+                </div>
+            </div>
+            
+            <!-- RIGHT SIDE: RECOMMENDATIONS -->
+            <div class="recommendations-box" id="recommendations">
+                <h2>📋 Recommendations</h2>
+                <p style="color: #999; text-align: center; padding: 40px 20px;">
+                    👈 Select a budget package to get personalized recommendations
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sync slider and input
+        const slider = document.getElementById('budgetSlider');
+        const input = document.getElementById('totalBudget');
+        const display = document.getElementById('budgetDisplay');
+        
+        slider.addEventListener('input', (e) => {
+            input.value = e.target.value;
+            display.textContent = '$' + parseInt(e.target.value).toLocaleString();
+        });
+        
+        input.addEventListener('input', (e) => {
+            slider.value = e.target.value;
+            display.textContent = '$' + parseInt(e.target.value).toLocaleString();
+        });
+        
+        function getBudget() {
+            return parseInt(document.getElementById('totalBudget').value);
+        }
+        
+        function getStatus(allocated, budget) {
+            const percentage = (allocated / budget) * 100;
+            if (percentage <= 80) return '<span class="status-badge status-good">✓ Within Budget</span>';
+            if (percentage <= 95) return '<span class="status-badge status-warning">⚠ Close to Budget</span>';
+            return '<span class="status-badge status-high">⚠ Over Budget</span>';
+        }
+        
+        function showRecommendations(packages) {
+            const html = packages.map(pkg => `
+                <div class="recommendation">
+                    <h3>${pkg.name}</h3>
+                    <div class="recommendation-price">$${parseInt(pkg.total).toLocaleString()}</div>
+                    <div class="budget-status">
+                        <span>Allocated: $${parseInt(pkg.allocated).toLocaleString()}</span>
+                        ${getStatus(pkg.allocated, getBudget())}
+                    </div>
+                    <div class="recommendation-breakdown">
+                        ${pkg.breakdown.map(item => `
+                            <div>
+                                <span>${item.name}</span>
+                                <strong>$${parseInt(item.amount).toLocaleString()}</strong>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button onclick="bookPackage('${pkg.name}')" style="margin-top: 15px; font-size: 14px;">
+                        📌 Use This Package
+                    </button>
+                </div>
+            `).join('');
+            
+            document.getElementById('recommendations').innerHTML = '<h2>📋 Recommendations</h2>' + html;
+        }
+        
+        function calculateBasic() {
+            const budget = getBudget();
+            const packages = [
+                {
+                    name: '💡 Basic Budget-Friendly',
+                    total: budget * 0.6,
+                    allocated: budget * 0.6,
+                    breakdown: [
+                        { name: 'Venue (Basic)', amount: budget * 0.25 },
+                        { name: 'Catering (Appetizers)', amount: budget * 0.20 },
+                        { name: 'DJ Service (4 hrs)', amount: budget * 0.15 }
+                    ]
+                },
+                {
+                    name: '💡 Basic with Photography',
+                    total: budget * 0.65,
+                    allocated: budget * 0.65,
+                    breakdown: [
+                        { name: 'Venue (Basic)', amount: budget * 0.25 },
+                        { name: 'Catering (Appetizers)', amount: budget * 0.15 },
+                        { name: 'Photography (Basic)', amount: budget * 0.25 }
+                    ]
+                }
+            ];
+            showRecommendations(packages);
+        }
+        
+        function calculateStandard() {
+            const budget = getBudget();
+            const packages = [
+                {
+                    name: '⭐ Standard Complete Event',
+                    total: budget * 0.80,
+                    allocated: budget * 0.80,
+                    breakdown: [
+                        { name: 'Venue (Good)', amount: budget * 0.30 },
+                        { name: 'Catering (Buffet)', amount: budget * 0.25 },
+                        { name: 'Photography (8 hrs)', amount: budget * 0.15 },
+                        { name: 'DJ Service (8 hrs)', amount: budget * 0.10 }
+                    ]
+                },
+                {
+                    name: '⭐ Standard Deluxe',
+                    total: budget * 0.85,
+                    allocated: budget * 0.85,
+                    breakdown: [
+                        { name: 'Venue (Premium)', amount: budget * 0.30 },
+                        { name: 'Catering (Sit-down)', amount: budget * 0.30 },
+                        { name: 'Photography (8 hrs)', amount: budget * 0.15 },
+                        { name: 'Decoration (Flowers)', amount: budget * 0.10 }
+                    ]
+                }
+            ];
+            showRecommendations(packages);
+        }
+        
+        function calculatePremium() {
+            const budget = getBudget();
+            const packages = [
+                {
+                    name: '👑 Premium Luxury Event',
+                    total: budget * 0.95,
+                    allocated: budget * 0.95,
+                    breakdown: [
+                        { name: 'Venue (Luxury)', amount: budget * 0.35 },
+                        { name: 'Catering (Full Service)', amount: budget * 0.30 },
+                        { name: 'Photography + Video', amount: budget * 0.20 },
+                        { name: 'DJ Service (Full Day)', amount: budget * 0.10 }
+                    ]
+                },
+                {
+                    name: '👑 Premium All-Inclusive',
+                    total: budget * 0.98,
+                    allocated: budget * 0.98,
+                    breakdown: [
+                        { name: 'Venue (Luxury)', amount: budget * 0.30 },
+                        { name: 'Catering (Formal)', amount: budget * 0.25 },
+                        { name: 'Photography + Video', amount: budget * 0.20 },
+                        { name: 'DJ Service', amount: budget * 0.10 },
+                        { name: 'Decoration (Full)', amount: budget * 0.13 }
+                    ]
+                }
+            ];
+            showRecommendations(packages);
+        }
+        
+        function bookPackage(name) {
+            alert('Package: ' + name + '\nBudget: $' + getBudget().toLocaleString() + '\n\nThis will save your package preferences!');
+        }
+    </script>
+</body>
+</html>

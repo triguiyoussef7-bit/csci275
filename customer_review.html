@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review - EventLogic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 20px; }
+        .booking-info { background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+        .booking-info p { margin: 8px 0; color: #666; }
+        .booking-info strong { color: #333; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #333; font-weight: bold; }
+        textarea, input[type="text"], select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        textarea { min-height: 120px; resize: vertical; font-family: Arial, sans-serif; }
+        .rating-group { display: flex; gap: 10px; }
+        .rating-group input { display: none; }
+        .rating-group label { margin: 0; cursor: pointer; font-size: 24px; padding: 10px; }
+        .rating-group input:checked ~ label, .rating-group label:hover { color: #ffc107; }
+        .star { color: #ddd; cursor: pointer; font-size: 30px; transition: color 0.2s; }
+        .star:hover { color: #ffc107; }
+        .stars-container { display: flex; gap: 5px; margin-bottom: 15px; }
+        button { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+        button:hover { background: #5568d3; }
+        .success { color: #27ae60; padding: 12px; background: #d5f4e6; border-radius: 6px; margin-bottom: 20px; }
+        .error { color: #e74c3c; padding: 12px; background: #fadbd8; border-radius: 6px; margin-bottom: 20px; }
+        a { color: #667eea; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Review Booking</h1>
+        
+        <div class="booking-info">
+            <p><strong>Service:</strong> {{ booking.service.service_name }}</p>
+            <p><strong>Vendor:</strong> {{ booking.vendor.vendor_name }}</p>
+            <p><strong>Booking Date:</strong> {{ booking.created_at.strftime('%Y-%m-%d') }}</p>
+            {% if booking.payments %}
+            <p><strong>Amount Paid:</strong> ${{ "%.2f" % booking.payments[0].amount }}</p>
+            {% endif %}
+        </div>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label>Rating (1-5 stars)</label>
+                <div class="stars-container">
+                    {% for i in range(1, 6) %}
+                    <span class="star" onclick="document.getElementById('rating').value={{i}}; updateStars({{i}})">★</span>
+                    {% endfor %}
+                </div>
+                <input type="hidden" id="rating" name="rating" value="{{ existing_review.rating if existing_review else 0 }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="title">Review Title (optional)</label>
+                <input type="text" id="title" name="title" placeholder="e.g., Great service!" value="{{ existing_review.title if existing_review else '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="comment">Your Review</label>
+                <textarea id="comment" name="comment" placeholder="Share your experience with this vendor...">{{ existing_review.comment if existing_review else '' }}</textarea>
+            </div>
+            
+            <button type="submit">{{ 'Update Review' if existing_review else 'Submit Review' }}</button>
+        </form>
+        
+        <p style="margin-top: 20px; text-align: center;">
+            <a href="{{ url_for('customer_booking_detail', booking_id=booking.id) }}">Back to Booking</a>
+        </p>
+    </div>
+    
+    <script>
+        function updateStars(rating) {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.style.color = '#ffc107';
+                } else {
+                    star.style.color = '#ddd';
+                }
+            });
+        }
+        
+        const rating = document.getElementById('rating').value;
+        if (rating) updateStars(rating);
+    </script>
+</body>
+</html>

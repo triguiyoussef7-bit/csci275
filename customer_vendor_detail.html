@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ vendor.vendor_name }} - EventLogic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .navbar h1 { font-size: 28px; cursor: pointer; }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+        .navbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .hero h1 { font-size: 42px; margin-bottom: 15px; }
+        .hero p { font-size: 18px; opacity: 0.9; margin-bottom: 20px; }
+        
+        .rating { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 15px; 
+            font-size: 18px;
+        }
+        
+        .stars { color: #ffc107; letter-spacing: 3px; font-size: 24px; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
+        
+        .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 40px; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+        
+        .section {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 26px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        
+        .service-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            border-left-color: #764ba2;
+        }
+        
+        .service-emoji { font-size: 40px; margin-bottom: 12px; }
+        .service-name { color: #2c3e50; font-weight: 600; margin-bottom: 8px; font-size: 16px; }
+        .service-price { color: #667eea; font-size: 20px; font-weight: bold; margin: 10px 0; }
+        .service-desc { color: #666; font-size: 13px; line-height: 1.5; margin-bottom: 12px; }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .info-section { margin-bottom: 25px; }
+        .info-section h3 { color: #667eea; font-size: 14px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
+        .info-section p { color: #555; font-size: 15px; line-height: 1.6; }
+        
+        .review {
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .review-name { color: #2c3e50; font-weight: 600; }
+        .review-rating { color: #ffc107; font-weight: bold; }
+        .review-title { color: #667eea; font-weight: 600; margin-bottom: 8px; }
+        .review-comment { color: #666; font-size: 14px; line-height: 1.6; }
+        .review-date { color: #999; font-size: 12px; margin-top: 10px; }
+        
+        .no-reviews {
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            padding: 40px;
+            text-align: center;
+            border-radius: 8px;
+            color: #999;
+        }
+        
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/customer/dashboard" style="color: white; text-decoration: none; margin-left: 0;"><h1 style="margin: 0;">EventLogic</h1></a>
+        <div>
+            <a href="/customer/dashboard">Dashboard</a>
+            <a href="/customer/vendors">Browse Vendors</a>
+            <a href="/customer/budget-calculator">Budget</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="hero">
+        <h1>{{ vendor.vendor_name }}</h1>
+        <p>{{ vendor.description or 'Professional Event Service Provider' }}</p>
+        {% if vendor.rating and vendor.rating > 0 %}
+        <div class="rating">
+            <span class="stars">
+                {% for i in range(vendor.rating|int) %}★{% endfor %}{% for i in range(5 - (vendor.rating|int)) %}☆{% endfor %}
+            </span>
+            <span style="font-size: 18px;">{{ vendor.rating|round(1) }}/5.0 Rating</span>
+        </div>
+        {% else %}
+        <div class="rating">
+            <span>⭐ No ratings yet - Be the first to review!</span>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="container">
+        <a href="/customer/vendors" class="back-link">← Back to Vendors</a>
+        
+        <div class="grid">
+            <!-- Services Column -->
+            <div>
+                <div class="section">
+                    <h2>📦 Services Offered</h2>
+                    
+                    {% if services %}
+                        <div class="services-grid">
+                            {% for service in services %}
+                            <div class="service-card">
+                                <div class="service-emoji">
+                                    {% if service.photo_url and service.photo_url|length < 5 %}
+                                        {{ service.photo_url }}
+                                    {% else %}
+                                        {% if service.category == 'venue' %}🏛️
+                                        {% elif service.category == 'catering' %}🍽️
+                                        {% elif service.category == 'photography' %}📷
+                                        {% elif service.category == 'decoration' %}🌹
+                                        {% elif service.category == 'music' %}🎵
+                                        {% else %}⭐{% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="service-name">{{ service.service_name }}</div>
+                                {% if service.description %}
+                                    <div class="service-desc">{{ service.description }}</div>
+                                {% endif %}
+                                <div class="service-price">${{ "%.2f" % service.price }}</div>
+                                <form method="POST" action="/customer/book-service/{{ service.id }}" style="margin-top: 0;">
+                                    <button type="submit" class="btn" style="margin-top: 0;">Book Service</button>
+                                </form>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p style="color: #999; text-align: center; padding: 40px;">No services listed yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Info & Reviews Column -->
+            <div>
+                <!-- Vendor Info -->
+                <div class="section" style="margin-bottom: 30px;">
+                    <h2 style="border: none; padding-bottom: 0; margin-bottom: 20px;">ℹ️ About</h2>
+                    
+                    {% if vendor.city %}
+                    <div class="info-section">
+                        <h3>📍 Location</h3>
+                        <p>{{ vendor.city }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if vendor.phone %}
+                    <div class="info-section">
+                        <h3>📞 Phone</h3>
+                        <p>{{ vendor.phone }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if vendor.address %}
+                    <div class="info-section">
+                        <h3>🏠 Address</h3>
+                        <p>{{ vendor.address }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="info-section">
+                        <h3>📊 Stats</h3>
+                        <p><strong>{{ vendor.total_bookings }}</strong> successful bookings</p>
+                    </div>
+                </div>
+                
+                <!-- Reviews -->
+                <div class="section">
+                    <h2>⭐ Customer Reviews</h2>
+                    
+                    {% if reviews %}
+                        {% for review in reviews %}
+                        <div class="review">
+                            <div class="review-header">
+                                <span class="review-name">{{ review.customer.name if review.customer else 'Anonymous' }}</span>
+                                <span class="review-rating">
+                                    {% for i in range(review.rating|int) %}★{% endfor %}{% for i in range(5 - (review.rating|int)) %}☆{% endfor %}
+                                </span>
+                            </div>
+                            {% if review.title %}
+                            <div class="review-title">{{ review.title }}</div>
+                            {% endif %}
+                            {% if review.comment %}
+                            <div class="review-comment">{{ review.comment }}</div>
+                            {% endif %}
+                            <div class="review-date">{{ review.created_at.strftime('%B %d, %Y') }}</div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-reviews">
+                            <p style="font-size: 16px; margin-bottom: 10px;">👏 No reviews yet</p>
+                            <p style="font-size: 14px;">Book a service and share your experience!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - EventLogic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .navbar h1 { font-size: 28px; cursor: pointer; }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+        .navbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        
+        .page-header {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        .page-header h2 { color: #333; font-size: 32px; margin-bottom: 10px; }
+        .page-header p { color: #666; font-size: 16px; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .bookings-list {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .booking-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            transition: all 0.3s;
+        }
+        
+        .booking-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+        
+        .booking-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            color: white;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: start;
+        }
+        
+        .booking-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .booking-vendor {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d1e7dd; color: #0f5132; }
+        .status-completed { background: #cfe2ff; color: #084298; }
+        .status-cancelled { background: #f8d7da; color: #842029; }
+        
+        .booking-body {
+            padding: 30px;
+        }
+        
+        .booking-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            color: #999;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .detail-value.price {
+            color: #667eea;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .booking-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f0ff;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #f8d7da;
+            color: #842029;
+            border: 2px solid #842029;
+        }
+        
+        .btn-danger:hover {
+            background: #842029;
+            color: white;
+        }
+        
+        .empty-state {
+            background: white;
+            border-radius: 12px;
+            padding: 80px 40px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        .empty-state-icon { font-size: 64px; margin-bottom: 20px; }
+        .empty-state-text { color: #999; font-size: 16px; margin-bottom: 25px; }
+        
+        .back-btn {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        
+        .back-btn:hover { text-decoration: underline; }
+        
+        @media (max-width: 768px) {
+            .booking-header { grid-template-columns: 1fr; }
+            .booking-details { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/customer/dashboard" style="color: white; text-decoration: none; margin-left: 0;"><h1 style="margin: 0;">EventLogic</h1></a>
+        <div>
+            <a href="/customer/dashboard">Dashboard</a>
+            <a href="/customer/vendors">Browse Vendors</a>
+            <a href="/customer/budget-calculator">Budget</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h2>📋 Your Bookings</h2>
+            <p>Manage and track all your event service bookings</p>
+        </div>
+        
+        {% if bookings %}
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ bookings|length }}</div>
+                    <div class="stat-label">Total Bookings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ bookings|selectattr('status', 'equalto', 'completed')|list|length }}</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ bookings|selectattr('status', 'equalto', 'pending')|list|length }}</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+            </div>
+            
+            <!-- Bookings -->
+            <div class="bookings-list">
+                {% for booking in bookings|reverse %}
+                <div class="booking-card">
+                    <div class="booking-header">
+                        <div>
+                            <div class="booking-title">
+                                {{ booking.service.service_name if booking.service else 'Service Booking' }}
+                            </div>
+                            <div class="booking-vendor">
+                                📍 {{ booking.vendor.vendor_name if booking.vendor else 'Unknown Vendor' }}
+                            </div>
+                        </div>
+                        <span class="status-badge status-{{ booking.status.lower() }}">
+                            {{ booking.status.upper() }}
+                        </span>
+                    </div>
+                    
+                    <div class="booking-body">
+                        <div class="booking-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Service</div>
+                                <div class="detail-value">{{ booking.service.service_name if booking.service else 'N/A' }}</div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <div class="detail-label">Category</div>
+                                <div class="detail-value">
+                                    {% if booking.service %}
+                                        {% if booking.service.category == 'venue' %}🏛️ Venue
+                                        {% elif booking.service.category == 'catering' %}🍽️ Catering
+                                        {% elif booking.service.category == 'photography' %}📷 Photography
+                                        {% elif booking.service.category == 'decoration' %}🌹 Decoration
+                                        {% elif booking.service.category == 'music' %}🎵 Music
+                                        {% else %}⭐ {{ booking.service.category }}
+                                        {% endif %}
+                                    {% else %}N/A{% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <div class="detail-label">Amount</div>
+                                <div class="detail-value price">
+                                    ${% if booking.payments and booking.payments[0] %}{{ "%.2f" % booking.payments[0].amount }}{% else %}0.00{% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <div class="detail-label">Booked Date</div>
+                                <div class="detail-value">{{ booking.created_at.strftime('%b %d, %Y') if booking.created_at else 'N/A' }}</div>
+                            </div>
+                            
+                            {% if booking.requested_date %}
+                            <div class="detail-item">
+                                <div class="detail-label">Event Date</div>
+                                <div class="detail-value">{{ booking.requested_date.strftime('%b %d, %Y') }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if booking.payments and booking.payments[0] %}
+                            <div class="detail-item">
+                                <div class="detail-label">Payment Status</div>
+                                <div class="detail-value">{{ booking.payments[0].payment_status|upper }}</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="booking-actions">
+                            <a href="/customer/booking/{{ booking.id }}" class="btn btn-primary">View Details</a>
+                            
+                            {% if booking.status == 'pending' %}
+                                <a href="/customer/payment/{{ booking.id }}" class="btn btn-secondary">💳 Pay Now</a>
+                                <form method="POST" action="/customer/booking/{{ booking.id }}/cancel" style="flex: 1;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Cancel this booking?')">Cancel</button>
+                                </form>
+                            {% elif booking.status == 'completed' %}
+                                <a href="/customer/booking/{{ booking.id }}/review" class="btn btn-secondary">⭐ Leave Review</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <p class="empty-state-text">You haven't made any bookings yet</p>
+                <p style="color: #999; margin-bottom: 30px;">Explore our vendors and book amazing services for your event</p>
+                <a href="/customer/vendors" class="btn btn-primary" style="max-width: 300px; margin: 0 auto;">
+                    Explore Vendors
+                </a>
+            </div>
+        {% endif %}
+        
+        <a href="/customer/dashboard" class="back-btn">← Back to Dashboard</a>
+    </div>
+</body>
+</html>

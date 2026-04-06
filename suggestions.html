@@ -1,0 +1,246 @@
+{% extends "layout.html" %}
+
+{% block title %}Event Suggestions - Event Planner{% endblock %}
+
+{% block content %}
+<div class="suggestions-hero">
+    <div class="container">
+        <h1>✨ Events for Your Budget</h1>
+        <p class="budget-display">Budget: <strong>${{ "{:,.0f}".format(budget) }}</strong></p>
+        <p>Choose an event type to get started planning</p>
+    </div>
+</div>
+
+<div class="container">
+    {% if suggestions %}
+    <div class="suggestions-grid">
+        {% for suggestion in suggestions %}
+        <div class="suggestion-card">
+            <div class="suggestion-image">
+                <img src="{{ suggestion.image }}" alt="{{ suggestion.name }}" />
+                <div class="suggestion-icon">{{ suggestion.icon }}</div>
+            </div>
+            <div class="suggestion-content">
+                <h3>{{ suggestion.name }}</h3>
+                <p class="suggestion-description">{{ suggestion.description }}</p>
+                
+                <div class="suggestion-budget">
+                    <div class="budget-range">
+                        <span class="label">Budget Range:</span>
+                        <span class="value">${{ "{:,.0f}".format(suggestion.min_budget) }} - ${{ "{:,.0f}".format(suggestion.max_budget) }}</span>
+                    </div>
+                    <div class="budget-fit">
+                        ✅ Perfect for your ${{ "{:,.0f}".format(budget) }} budget
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-select" onclick="selectEvent('{{ suggestion.type }}', '{{ suggestion.name }}', {{ budget }})">
+                    Select & Plan
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state" style="padding: 4rem 2rem; text-align: center;">
+        <div class="empty-state-icon">😕</div>
+        <h2>No Events Found</h2>
+        <p>We don't have event suggestions for your budget of ${{ "{:,.0f}".format(budget) }}.</p>
+        <p>Try adjusting your budget or explore our <a href="/budget">budget planner</a>.</p>
+        <a href="/budget" class="btn btn-primary" style="margin-top: 1.5rem;">Back to Budget Planner</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.suggestions-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: var(--white);
+    padding: var(--space-2xl) var(--space-md);
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+}
+
+.suggestions-hero h1 {
+    color: var(--white);
+    margin-bottom: var(--space-md);
+}
+
+.budget-display {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-sm) !important;
+}
+
+.budget-display strong {
+    color: #ffd700;
+    font-weight: 700;
+}
+
+.suggestions-hero > .container > p:last-child {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+
+.suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.suggestion-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.suggestion-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.suggestion-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+.suggestion-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+    transition: opacity 0.3s ease-out;
+}
+
+.suggestion-card:hover .suggestion-image img {
+    opacity: 1;
+}
+
+.suggestion-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.suggestion-content {
+    padding: var(--space-lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.suggestion-content h3 {
+    margin: 0 0 var(--space-sm) 0;
+    color: var(--dark);
+    font-size: var(--font-size-lg);
+}
+
+.suggestion-description {
+    color: var(--gray);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-md) !important;
+}
+
+.suggestion-budget {
+    background: var(--light);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.budget-range {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-sm);
+    font-size: var(--font-size-sm);
+}
+
+.budget-range .label {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.budget-range .value {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.budget-fit {
+    background: #d1fae5;
+    color: #047857;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-align: center;
+}
+
+.btn-select {
+    margin-top: auto;
+    width: 100%;
+}
+
+.empty-state {
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-lg);
+}
+
+.empty-state h2 {
+    margin-bottom: var(--space-md);
+}
+
+.empty-state p {
+    max-width: 400px;
+    margin: var(--space-md) auto !important;
+}
+
+.empty-state a {
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .suggestions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .suggestion-content {
+        padding: var(--space-md);
+    }
+}
+</style>
+
+<script>
+function selectEvent(type, name, budget) {
+    // Store selection in session/localStorage
+    localStorage.setItem('selectedEventType', type);
+    localStorage.setItem('selectedEventName', name);
+    localStorage.setItem('selectedBudget', budget);
+    
+    // Redirect to create page
+    window.location.href = `/create?type=${type}&budget=${budget}`;
+}
+
+// Fallback for when images fail to load
+document.querySelectorAll('.suggestion-image img').forEach(img => {
+    img.addEventListener('error', function() {
+        this.style.display = 'none';
+        this.parentElement.style.background = 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)';
+    });
+});
+</script>
+{% endblock %}

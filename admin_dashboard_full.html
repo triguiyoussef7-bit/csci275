@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - EventLogic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .navbar { background: rgba(0,0,0,0.1); padding: 15px 30px; margin-bottom: 30px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar a { color: white; text-decoration: none; margin: 0 15px; font-weight: 500; }
+        .navbar a:hover { text-decoration: underline; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 30px; text-align: center; font-size: 28px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+        .stat-value { font-size: 36px; font-weight: bold; margin: 10px 0; }
+        .stat-label { font-size: 13px; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
+        .section { margin-bottom: 30px; }
+        .section-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 15px; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        .table-container { overflow-x: auto; background: #f5f5f5; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #667eea; color: white; padding: 15px; text-align: left; font-weight: bold; }
+        td { padding: 12px 15px; border-bottom: 1px solid #ddd; }
+        tr:hover { background: #ffffff; }
+        tr:last-child td { border-bottom: none; }
+        .vendor-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #667eea; }
+        .vendor-info { flex: 1; }
+        .vendor-name { font-weight: bold; color: #333; }
+        .vendor-rating { color: #f39c12; font-size: 16px; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .status-confirmed { background: #d1e7dd; color: #0f5132; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-completed { background: #cfe2ff; color: #084298; }
+        .empty-message { background: #f5f5f5; padding: 20px; border-radius: 8px; text-align: center; color: #999; }
+        a { color: #667eea; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div>
+            <a href="{{ url_for('admin_dashboard_full') }}" style="font-weight: bold;">Dashboard</a>
+            <a href="{{ url_for('admin_vendors') }}">Vendors</a>
+            <a href="{{ url_for('admin_disputes') }}">Disputes</a>
+        </div>
+        <div>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1>📊 Admin System Dashboard</h1>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Customers</div>
+                <div class="stat-value">{{ total_customers }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Vendors</div>
+                <div class="stat-value">{{ total_vendors }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Verified Vendors</div>
+                <div class="stat-value">{{ verified_vendors }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Bookings</div>
+                <div class="stat-value">{{ total_bookings }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Completed Bookings</div>
+                <div class="stat-value">{{ completed_bookings }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending Bookings</div>
+                <div class="stat-value">{{ pending_bookings }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value">${{ "%.0f" % total_revenue }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Open Disputes</div>
+                <div class="stat-value">{{ open_disputes }}</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Top Rated Vendors</div>
+            {% if top_vendors %}
+            <div>
+                {% for vendor in top_vendors %}
+                <div class="vendor-row">
+                    <div class="vendor-info">
+                        <div class="vendor-name">{{ vendor.vendor_name }}</div>
+                        <div style="color: #666; font-size: 14px;">{{ vendor.description[:80] }}...</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="vendor-rating">
+                            {% for i in range(vendor.rating|int) %}★{% endfor %}
+                        </div>
+                        <div style="color: #999; font-size: 12px;">{{ vendor.total_bookings }} bookings</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-message">No vendors yet</div>
+            {% endif %}
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Recent Bookings</div>
+            {% if recent_bookings %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Vendor</th>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in recent_bookings %}
+                        <tr>
+                            <td>{{ booking.customer.name }}</td>
+                            <td>{{ booking.vendor.vendor_name }}</td>
+                            <td>{{ booking.service.service_name }}</td>
+                            <td><span class="status-badge status-{{ booking.status }}">{{ booking.status.upper() }}</span></td>
+                            <td>{{ booking.created_at.strftime('%B %d, %Y') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-message">No bookings yet</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

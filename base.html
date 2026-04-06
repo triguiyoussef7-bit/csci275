@@ -1,0 +1,110 @@
+<!-- Base template for EventLogic system -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EventLogic - Event Planning Platform{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='eventlogic.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        {% if current_user.is_authenticated %}
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">EventLogic</h1>
+            </div>
+            
+            <nav class="sidebar-nav">
+                {% if current_user.__class__.__name__ == 'Customer' %}
+                    <a href="{{ url_for('customer_dashboard') }}" class="nav-link">
+                        <span class="icon">🏠</span> Home
+                    </a>
+                    <a href="{{ url_for('customer_events') }}" class="nav-link">
+                        <span class="icon">📅</span> Events
+                    </a>
+                    <a href="{{ url_for('customer_vendors') }}" class="nav-link">
+                        <span class="icon">🏢</span> Venues
+                    </a>
+                    <a href="{{ url_for('customer_bookings') }}" class="nav-link">
+                        <span class="icon">📝</span> Bookings
+                    </a>
+                    <a href="{{ url_for('customer_profile') }}" class="nav-link">
+                        <span class="icon">👤</span> Profile
+                    </a>
+                {% elif current_user.__class__.__name__ == 'Vendor' %}
+                    <a href="{{ url_for('vendor_dashboard') }}" class="nav-link">
+                        <span class="icon">🏠</span> Home
+                    </a>
+                    <a href="{{ url_for('vendor_services') }}" class="nav-link">
+                        <span class="icon">📋</span> Services
+                    </a>
+                    <a href="{{ url_for('vendor_bookings') }}" class="nav-link">
+                        <span class="icon">📞</span> Requests
+                    </a>
+                    <a href="{{ url_for('vendor_profile') }}" class="nav-link">
+                        <span class="icon">👤</span> Profile
+                    </a>
+                {% elif current_user.__class__.__name__ == 'Admin' %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+                        <span class="icon">📊</span> Dashboard
+                    </a>
+                    <a href="{{ url_for('admin_vendors') }}" class="nav-link">
+                        <span class="icon">✓</span> Verify Vendors
+                    </a>
+                    <a href="{{ url_for('admin_disputes') }}" class="nav-link">
+                        <span class="icon">⚠️</span> Disputes
+                    </a>
+                    <a href="{{ url_for('admin_reports') }}" class="nav-link">
+                        <span class="icon">📈</span> Reports
+                    </a>
+                {% endif %}
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+            </div>
+        </aside>
+        {% endif %}
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            {% if current_user.is_authenticated %}
+            <header class="top-bar">
+                <div class="user-info">
+                    <span class="welcome-text">Welcome, <strong>
+                        {% if current_user.__class__.__name__ == 'Customer' %}
+                            {{ current_user.name }}
+                        {% else %}
+                            {{ current_user.vendor_name if current_user.__class__.__name__ == 'Vendor' else current_user.name }}
+                        {% endif %}
+                    </strong></span>
+                </div>
+            </header>
+            {% endif %}
+            
+            <!-- Alerts -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                            <button class="alert-close">&times;</button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Page Content -->
+            <div class="content-wrapper">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    
+    <script src="{{ url_for('static', filename='eventlogic.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

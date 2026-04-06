@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vendor Reviews - EventLogic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        .vendor-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        .vendor-header h1 { margin-bottom: 10px; }
+        .vendor-rating { font-size: 24px; margin: 10px 0; }
+        .stars { color: #ffc107; }
+        .rating-count { color: #ddd; font-size: 14px; }
+        .review-item { border-bottom: 1px solid #ddd; padding: 20px 0; }
+        .review-item:last-child { border-bottom: none; }
+        .review-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
+        .reviewer-name { font-weight: bold; color: #333; }
+        .review-date { color: #999; font-size: 14px; }
+        .review-rating { color: #f39c12; font-size: 18px; margin: 10px 0; }
+        .review-title { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 8px; }
+        .review-comment { color: #666; line-height: 1.6; }
+        .empty { text-align: center; color: #999; padding: 40px; }
+        a { color: #667eea; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back { display: inline-block; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('customer_vendors') }}" class="back">&larr; Back to Vendors</a>
+        
+        <div class="vendor-header">
+            <h1>{{ vendor.vendor_name }}</h1>
+            <p>{{ vendor.description }}</p>
+            <div class="vendor-rating">
+                <span class="stars">
+                    {% for i in range(vendor.rating|int) %}★{% endfor %}
+                    {% if vendor.rating % 1 >= 0.5 %}½{% endif %}
+                </span>
+                <span class="rating-count">({{ vendor.rating|round(1) }} out of 5.0)</span>
+            </div>
+            <p>{{ reviews|length }} review(s) • {{ vendor.total_bookings }} total bookings</p>
+        </div>
+        
+        {% if reviews %}
+        <div class="reviews-list">
+            {% for review in reviews %}
+            <div class="review-item">
+                <div class="review-header">
+                    <div>
+                        <div class="reviewer-name">{{ review.customer.name }}</div>
+                        <div class="review-date">{{ review.created_at.strftime('%B %d, %Y') }}</div>
+                    </div>
+                </div>
+                <div class="review-rating">
+                    {% for i in range(review.rating|int) %}★{% endfor %}
+                    {% if review.rating % 1 >= 0.5 %}½{% endif %}
+                </div>
+                {% if review.title %}
+                <div class="review-title">{{ review.title }}</div>
+                {% endif %}
+                {% if review.comment %}
+                <div class="review-comment">{{ review.comment }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+            <p>No reviews yet. Be the first to review this vendor!</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Planner - EventLogic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar h1 { font-size: 24px; }
+        .navbar a { color: white; text-decoration: none; margin-left: 20px; padding: 8px 16px; border-radius: 4px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .section { background: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .section h2 { color: #333; margin-bottom: 20px; }
+        .btn { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .budget-form { max-width: 600px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .budget-display { background: #f9f9f9; padding: 20px; border-radius: 4px; }
+        .budget-item { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .budget-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>EventLogic</h1>
+        <div>
+            <a href="/customer/events">My Events</a>
+            <a href="/customer/budget">Budget Planner</a>
+            <a href="/customer/vendors">Find Vendors</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <h2>Budget Planner{% if event %} - {{ event.event_type }}{% endif %}</h2>
+            
+            {% if not budget %}
+                <form method="POST" class="budget-form">
+                    <div class="form-group">
+                        <label>Total Budget ($)</label>
+                        <input type="number" name="total_budget" step="0.01" min="0" required placeholder="e.g., 5000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea name="description" rows="4" placeholder="Any special requirements..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn">Create Budget</button>
+                </form>
+            {% else %}
+                <div class="budget-display">
+                    <div class="budget-item">
+                        <strong>Total Budget:</strong> ${{ "%.2f" % budget.total_budget }}
+                    </div>
+                    <div class="budget-item">
+                        <strong>Created:</strong> {{ budget.created_at.strftime('%B %d, %Y') if budget.created_at else 'N/A' }}
+                    </div>
+                    {% if budget.description %}
+                        <div class="budget-item">
+                            <strong>Notes:</strong> {{ budget.description }}
+                        </div>
+                    {% endif %}
+                    <div style="margin-top: 20px;">
+                        <a href="/customer/recommendations/{{ budget.id }}" class="btn">View Recommendations</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <a href="/customer/dashboard" class="btn">Back to Dashboard</a>
+    </div>
+</body>
+</html>

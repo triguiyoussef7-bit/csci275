@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details - EventLogic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .section { background: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .section h2 { color: #333; margin-bottom: 20px; }
+        .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .detail-item { padding: 15px; background: #f9f9f9; border-radius: 4px; }
+        .detail-item strong { color: #333; }
+        .detail-item p { color: #666; margin-top: 5px; }
+        .btn { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 10px; }
+        .btn:hover { background: #764ba2; }
+        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .action-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .success-message { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px 20px; border-radius: 6px; margin-bottom: 20px; font-weight: 500; display: flex; align-items: center; }
+        .success-message::before { content: "✓ "; font-weight: bold; margin-right: 10px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>EventLogic</h1>
+        <div>
+            <a href="/customer/events">My Events</a>
+            <a href="/customer/budget">Budget Planner</a>
+            <a href="/customer/vendors">Find Vendors</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <h2>Booking Details</h2>
+            
+            {% if booking %}
+                {% if payment and payment.payment_status == 'completed' %}
+                <div class="success-message">
+                    Payment Successful! Your booking is confirmed.
+                </div>
+                {% endif %}
+                
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <strong>Service:</strong>
+                        <p>{{ booking.service.service_name if booking.service else 'N/A' }}</p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Vendor:</strong>
+                        <p>{{ booking.vendor.vendor_name if booking.vendor else 'N/A' }}</p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Amount:</strong>
+                        <p>{% if booking.payments and booking.payments[0] %}${{ "%.2f" % booking.payments[0].amount }}{% else %}N/A{% endif %}</p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Status:</strong>
+                        <p><span class="status-badge status-{{ booking.status.lower() }}">{{ booking.status.upper() }}</span></p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Booked On:</strong>
+                        <p>{{ booking.booking_date.strftime('%B %d, %Y') if booking.booking_date else 'N/A' }}</p>
+                    </div>
+                    {% if payment %}
+                    <div class="detail-item">
+                        <strong>Payment Status:</strong>
+                        <p>{{ payment.payment_status.upper() }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if booking.status.lower() == 'pending' %}
+                    <div class="action-buttons">
+                        {% if not payment or payment.payment_status != 'completed' %}
+                        <a href="/customer/payment/{{ booking.id }}" class="btn">Pay Now</a>
+                        {% endif %}
+                        <form method="POST" action="/customer/booking/{{ booking.id }}/cancel" style="display: inline;">
+                            <button type="submit" class="btn" style="background: #dc3545;" onclick="return confirm('Are you sure you want to cancel this booking?')">Cancel Booking</button>
+                        </form>
+                    </div>
+                {% elif booking.status.lower() == 'completed' %}
+                    <div class="action-buttons">
+                        <a href="/customer/booking/{{ booking.id }}/review" class="btn" style="background: #f39c12;">Leave a Review</a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <p style="color: #999;">Booking not found.</p>
+            {% endif %}
+        </div>
+        
+        <a href="/customer/bookings" class="btn">Back to Bookings</a>
+    </div>
+</body>
+</html>

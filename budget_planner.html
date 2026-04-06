@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Budget Planner - EventLogic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .navbar {
+            background: rgba(0,0,0,0.1);
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar h1 { font-size: 28px; cursor: pointer; }
+        .navbar a { color: white; text-decoration: none; margin: 0 15px; font-weight: 500; }
+        .navbar a:hover { text-decoration: underline; }
+        
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .hero {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 50px 30px;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .hero h2 { font-size: 36px; margin-bottom: 15px; }
+        .hero p { font-size: 18px; opacity: 0.9; }
+        
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 1000px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h3 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 22px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .budget-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .budget-amount {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .budget-label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+        
+        .event-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .event-type-btn {
+            padding: 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .event-type-btn:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        
+        .event-type-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .vendors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .vendor-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .vendor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .vendor-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            color: white;
+        }
+        
+        .vendor-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .vendor-rating {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .vendor-content {
+            padding: 20px;
+        }
+        
+        .service-type {
+            background: #f0f0ff;
+            color: #667eea;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+        
+        .service-list {
+            margin-bottom: 15px;
+        }
+        
+        .service-item {
+            padding: 10px;
+            background: #f9f9f9;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+            font-size: 14px;
+        }
+        
+        .service-price {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .book-btn {
+            width: 100%;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .book-btn:hover {
+            background: #764ba2;
+        }
+        
+        .no-vendors {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .results-title {
+            margin-bottom: 25px;
+            font-size: 20px;
+            color: #333;
+        }
+        
+        .budget-breakdown {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/customer/dashboard" style="color: white; text-decoration: none;"><h1 style="margin: 0;">EventLogic</h1></a>
+        <div>
+            <a href="/customer/dashboard">Dashboard</a>
+            <a href="/customer/vendors">All Vendors</a>
+            <a href="/customer/bookings">My Bookings</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="hero">
+            <h2>💰 Smart Budget Planner</h2>
+            <p>Enter your budget and event type. We'll show you what's available!</p>
+        </div>
+        
+        <div class="layout">
+            <!-- LEFT: Budget Calculator -->
+            <div class="card">
+                <h3>📊 Your Budget</h3>
+                
+                <div class="form-group">
+                    <label>Total Budget ($)</label>
+                    <input type="number" id="budget" value="5000" min="500" step="100">
+                </div>
+                
+                <div class="budget-display">
+                    <div class="budget-amount">$<span id="budgetDisplay">5000</span></div>
+                    <div class="budget-label">Your Event Budget</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Event Type</label>
+                    <div class="event-types">
+                        <button class="event-type-btn active" data-type="wedding">👰 Wedding</button>
+                        <button class="event-type-btn" data-type="birthday">🎂 Birthday</button>
+                        <button class="event-type-btn" data-type="corporate">💼 Corporate</button>
+                        <button class="event-type-btn" data-type="anniversary">💍 Anniversary</button>
+                        <button class="event-type-btn" data-type="graduation">🎓 Graduation</button>
+                        <button class="event-type-btn" data-type="other">🎉 Other</button>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="searchVendors()">Search Available Vendors</button>
+                
+                <div id="budgetBreakdown" style="display:none; margin-top: 25px;">
+                    <h3 style="font-size: 16px; border: none; padding: 0; margin-bottom: 12px;">💡 Budget Breakdown</h3>
+                    <div class="budget-breakdown">
+                        <div class="breakdown-item">
+                            <span>Venue (30%)</span>
+                            <span class="vendor-price" id="venuePrice">$1500</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Catering (35%)</span>
+                            <span id="cateringPrice">$1750</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Photography (20%)</span>
+                            <span id="photoPrice">$1000</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Decoration (10%)</span>
+                            <span id="decorPrice">$500</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Entertainment (5%)</span>
+                            <span id="entertainPrice">$250</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RIGHT: Vendor Results -->
+            <div>
+                <div class="card">
+                    <h3>🏢 Available Vendors</h3>
+                    <div id="vendorResults">
+                        <p style="color: #999; text-align: center; padding: 40px;">
+                            👆 Enter budget and select event type, then click "Search"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let selectedEventType = 'wedding';
+        
+        // Update budget display
+        document.getElementById('budget').addEventListener('input', function(e) {
+            const budget = parseInt(e.target.value);
+            document.getElementById('budgetDisplay').textContent = budget.toLocaleString();
+            
+            if (budget > 0) {
+                document.getElementById('budgetBreakdown').style.display = 'block';
+                document.getElementById('venuePrice').textContent = '$' + Math.round(budget * 0.30).toLocaleString();
+                document.getElementById('cateringPrice').textContent = '$' + Math.round(budget * 0.35).toLocaleString();
+                document.getElementById('photoPrice').textContent = '$' + Math.round(budget * 0.20).toLocaleString();
+                document.getElementById('decorPrice').textContent = '$' + Math.round(budget * 0.10).toLocaleString();
+                document.getElementById('entertainPrice').textContent = '$' + Math.round(budget * 0.05).toLocaleString();
+            }
+        });
+        
+        // Event type selection
+        document.querySelectorAll('.event-type-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.event-type-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedEventType = this.dataset.type;
+            });
+        });
+        
+        // Search vendors
+        function searchVendors() {
+            const budget = parseInt(document.getElementById('budget').value);
+            const eventType = selectedEventType;
+            
+            fetch(`/customer/search-vendors?budget=${budget}&event_type=${eventType}`)
+                .then(r => r.json())
+                .then(data => displayVendors(data))
+                .catch(err => console.error(err));
+        }
+        
+        function displayVendors(data) {
+            const resultsDiv = document.getElementById('vendorResults');
+            
+            if (!data.vendors || data.vendors.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="no-vendors">
+                        <p style="font-size: 18px; margin-bottom: 10px;">😢 No vendors found</p>
+                        <p>Try increasing your budget or selecting a different event type</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `<div class="results-title">✅ Found ${data.vendors.length} vendor${data.vendors.length !== 1 ? 's' : ''} within your budget</div><div class="vendors-grid">`;
+            
+            data.vendors.forEach(vendor => {
+                const serviceHtml = vendor.services.map(s => `
+                    <div class="service-item">
+                        ${s.emoji} ${s.name} - <strong>$${s.price}</strong>
+                    </div>
+                `).join('');
+                
+                html += `
+                    <div class="vendor-card">
+                        <div class="vendor-header">
+                            <div class="vendor-name">${vendor.name}</div>
+                            <div class="vendor-rating">
+                                ${vendor.rating > 0 ? '⭐ ' + vendor.rating.toFixed(1) + '/5' : 'No ratings yet'}
+                            </div>
+                        </div>
+                        <div class="vendor-content">
+                            <div class="service-type">${vendor.event_type || 'Multi-purpose'}</div>
+                            <div class="service-list">
+                                ${serviceHtml}
+                            </div>
+                            <a href="/customer/vendor/${vendor.id}" class="book-btn">View Details →</a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        }
+        
+        // Auto-search on load
+        searchVendors();
+    </script>
+</body>
+</html>

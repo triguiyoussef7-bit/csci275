@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Event - Event Planner{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>✏️ Edit Event</h1>
+
+    <form id="event-form">
+        <div class="form-group">
+            <label for="title">Event Title <span class="required">*</span></label>
+            <input type="text" id="title" name="title" required placeholder="e.g., Team Meeting, Birthday Party" value="{{ event.title }}" />
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" placeholder="Add details about your event...">{{ event.description }}</textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="date">Date <span class="required">*</span></label>
+                <input type="date" id="date" name="date" required value="{{ event.date.isoformat() }}" />
+            </div>
+
+            <div class="form-group">
+                <label for="time">Time <span class="required">*</span></label>
+                <input type="time" id="time" name="time" required value="{{ event.time.isoformat() }}" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category <span class="required">*</span></label>
+            <input type="text" id="category" name="category" required placeholder="e.g., Meeting, Birthday, Conference, Work" value="{{ event.category }}" />
+        </div>
+
+        <div id="error-message" class="alert alert-error" style="display: none;"></div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-block">Update Event</button>
+            <a href="/" class="btn btn-secondary btn-block">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const eventId = {{ event.id }};
+
+    document.getElementById('event-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById('title').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+        const category = document.getElementById('category').value.trim();
+
+        const errorDiv = document.getElementById('error-message');
+        errorDiv.style.display = 'none';
+
+        if (!title || !date || !time || !category) {
+            showError('Please fill in all required fields (*)', errorDiv);
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/events/${eventId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    date,
+                    time,
+                    category
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('✅ Event updated successfully!');
+                window.location.href = '/';
+            } else if (response.status === 409) {
+                showError(`⚠️ Time Conflict: An event already exists at ${date} ${time}`, errorDiv);
+            } else {
+                showError('❌ ' + (result.error || 'Failed to update event'), errorDiv);
+            }
+        } catch (error) {
+            console.error('Error updating event:', error);
+            showError('❌ Failed to update event', errorDiv);
+        }
+    });
+
+    function showError(message, errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        window.scrollTo(0, 0);
+    }
+</script>
+{% endblock %}

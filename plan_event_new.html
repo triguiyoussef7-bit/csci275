@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Your Event - EventLogic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .navbar h1 { font-size: 28px; cursor: pointer; }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+        .navbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .event-types-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .event-type-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 3px solid transparent;
+        }
+        
+        .event-type-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        
+        .event-type-card.active {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        
+        .event-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+        
+        .event-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .event-description {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .hero h2 { font-size: 36px; margin-bottom: 15px; }
+        .hero p { font-size: 18px; opacity: 0.9; }
+        
+        .planner-section {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 26px;
+            color: #333;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        input[type="text"], input[type="date"], input[type="number"] {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .vendors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        
+        .vendor-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .vendor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .vendor-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            color: white;
+        }
+        
+        .vendor-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .vendor-rating {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .vendor-body {
+            padding: 20px;
+        }
+        
+        .service-item {
+            background: #f9f9f9;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        
+        .service-price {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .vendor-btn {
+            width: 100%;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .vendor-btn:hover {
+            background: #764ba2;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            grid-column: 1 / -1;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/customer/dashboard" style="color: white; text-decoration: none; margin-left: 0;"><h1 style="margin: 0;">EventLogic</h1></a>
+        <div>
+            <a href="/customer/dashboard">Dashboard</a>
+            <a href="/customer/vendors">Browse Vendors</a>
+            <a href="/customer/bookings">My Bookings</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="hero">
+            <h2>🎉 Plan Your Perfect Event</h2>
+            <p>Select event type, set budget, and find amazing vendors</p>
+        </div>
+        
+        <!-- STEP 1: SELECT EVENT TYPE -->
+        <div class="planner-section">
+            <h3 class="section-title">Step 1: Choose Your Event Type</h3>
+            <div class="event-types-showcase">
+                <!-- Wedding -->
+                <div class="event-type-card" data-type="wedding" onclick="selectEvent('wedding', this)">
+                    <div class="event-icon">👰</div>
+                    <div class="event-title">Wedding</div>
+                    <div class="event-description">Elegant venues, catering, photography, decoration & music</div>
+                </div>
+                
+                <!-- Birthday -->
+                <div class="event-type-card" data-type="birthday" onclick="selectEvent('birthday', this)">
+                    <div class="event-icon">🎂</div>
+                    <div class="event-title">Birthday</div>
+                    <div class="event-description">Cake, decorations, entertainment, music & venue</div>
+                </div>
+                
+                <!-- Corporate -->
+                <div class="event-type-card" data-type="corporate" onclick="selectEvent('corporate', this)">
+                    <div class="event-icon">💼</div>
+                    <div class="event-title">Corporate Event</div>
+                    <div class="event-description">Conference hall, catering, AV equipment & branding</div>
+                </div>
+                
+                <!-- Anniversary -->
+                <div class="event-type-card" data-type="anniversary" onclick="selectEvent('anniversary', this)">
+                    <div class="event-icon">💍</div>
+                    <div class="event-title">Anniversary</div>
+                    <div class="event-description">Romantic venue, fine dining, decorations & photography</div>
+                </div>
+                
+                <!-- Graduation -->
+                <div class="event-type-card" data-type="graduation" onclick="selectEvent('graduation', this)">
+                    <div class="event-icon">🎓</div>
+                    <div class="event-title">Graduation</div>
+                    <div class="event-description">Party venue, catering, decoration & celebration</div>
+                </div>
+                
+                <!-- Soccer Party -->
+                <div class="event-type-card" data-type="soccer" onclick="selectEvent('soccer', this)">
+                    <div class="event-icon">⚽</div>
+                    <div class="event-title">Soccer Party</div>
+                    <div class="event-description">Sports venue, snacks, equipment & entertainment</div>
+                </div>
+                
+                <!-- Traveling -->
+                <div class="event-type-card" data-type="traveling" onclick="selectEvent('traveling', this)">
+                    <div class="event-icon">✈️</div>
+                    <div class="event-title">Travel Event</div>
+                    <div class="event-description">Tour guides, accommodation, transportation & meals</div>
+                </div>
+                
+                <!-- Other -->
+                <div class="event-type-card" data-type="other" onclick="selectEvent('other', this)">
+                    <div class="event-icon">🎉</div>
+                    <div class="event-title">Other Event</div>
+                    <div class="event-description">Custom event - any type you need</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- STEP 2: CREATE EVENT & SET BUDGET -->
+        <div class="planner-section">
+            <h3 class="section-title">Step 2: Create Your Event & Set Budget</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Event Name</label>
+                    <input type="text" id="eventName" placeholder="e.g., Sarah's Wedding">
+                </div>
+                <div class="form-group">
+                    <label>Event Date</label>
+                    <input type="date" id="eventDate">
+                </div>
+                <div class="form-group">
+                    <label>Total Budget ($)</label>
+                    <input type="number" id="budget" value="5000" min="500" step="100">
+                </div>
+                <div class="form-group">
+                    <label>Guest Count</label>
+                    <input type="number" id="guests" value="100" min="1">
+                </div>
+            </div>
+            <button class="btn" onclick="searchVendors()">🔍 Search Vendors for My Event</button>
+        </div>
+        
+        <!-- STEP 3: VENDOR RESULTS -->
+        <div class="planner-section">
+            <h3 class="section-title">Step 3: Select Vendors for Your Event</h3>
+            <div id="vendorResults" class="vendors-grid">
+                <div class="no-results">
+                    👆 Select an event type and click "Search Vendors"
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let selectedEventType = null;
+        
+        function selectEvent(type, element) {
+            // Remove active from all
+            document.querySelectorAll('.event-type-card').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Add active to clicked
+            element.classList.add('active');
+            selectedEventType = type;
+        }
+        
+        function searchVendors() {
+            if (!selectedEventType) {
+                alert('Please select an event type first');
+                return;
+            }
+            
+            const eventName = document.getElementById('eventName').value || 'My Event';
+            const eventDate = document.getElementById('eventDate').value;
+            const budget = parseInt(document.getElementById('budget').value);
+            const guests = parseInt(document.getElementById('guests').value);
+            
+            if (!eventDate) {
+                alert('Please select an event date');
+                return;
+            }
+            
+            if (budget < 500) {
+                alert('Budget must be at least $500');
+                return;
+            }
+            
+            // Show loading
+            const resultsDiv = document.getElementById('vendorResults');
+            resultsDiv.innerHTML = '<div class="loading">🔄 Searching vendors...</div>';
+            
+            // Fetch vendors
+            fetch(`/customer/search-vendors?budget=${budget}&event_type=${selectedEventType}`)
+                .then(r => r.json())
+                .then(data => {
+                    displayResults(data, eventName, eventDate, guests, budget);
+                })
+                .catch(err => {
+                    resultsDiv.innerHTML = '<div class="no-results">Error loading vendors</div>';
+                    console.error(err);
+                });
+        }
+        
+        function displayResults(data, eventName, eventDate, guests, budget) {
+            const resultsDiv = document.getElementById('vendorResults');
+            
+            if (!data.vendors || data.vendors.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="no-results">
+                        <p style="font-size: 18px; margin-bottom: 10px;">😢 No vendors found</p>
+                        <p>Try increasing your budget or selecting a different event type</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            data.vendors.forEach(vendor => {
+                const serviceHtml = vendor.services.map(s => `
+                    <div class="service-item">
+                        <span>${s.emoji} ${s.name}</span>
+                        <span class="service-price">$${s.price}</span>
+                    </div>
+                `).join('');
+                
+                html += `
+                    <div class="vendor-card">
+                        <div class="vendor-header">
+                            <div class="vendor-name">${vendor.name}</div>
+                            <div class="vendor-rating">
+                                ${vendor.rating > 0 ? '⭐ ' + vendor.rating.toFixed(1) + '/5' : '⭐ New vendor'}
+                            </div>
+                        </div>
+                        <div class="vendor-body">
+                            ${serviceHtml}
+                            <form method="POST" action="/customer/create-event-and-book" style="display: none; margin-top: 10px;">
+                                <input type="hidden" name="event_name" value="${eventName}">
+                                <input type="hidden" name="event_type" value="${selectedEventType}">
+                                <input type="hidden" name="event_date" value="${eventDate}">
+                                <input type="hidden" name="budget" value="${budget}">
+                                <input type="hidden" name="guest_count" value="${guests}">
+                                <input type="hidden" name="service_id" value="${vendor.services[0]?.id || ''}">
+                                <input type="hidden" name="vendor_id" value="${vendor.id}">
+                                <button type="submit" class="vendor-btn">Book This Service</button>
+                            </form>
+                            <a href="/customer/vendor/${vendor.id}" class="vendor-btn">View All Services →</a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventLogic - Event Planning Platform</title>
+    <link rel="stylesheet" href="/static/eventlogic.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 1000px;
+            width: 90%;
+            margin: 0 auto;
+        }
+        .hero-section {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            margin: 0 0 20px 0;
+            font-weight: 700;
+        }
+        .hero-section p {
+            font-size: 1.2rem;
+            margin: 0 0 30px 0;
+            opacity: 0.95;
+        }
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .login-box h2 {
+            margin: 0 0 30px 0;
+            color: #333;
+            font-size: 1.8rem;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        .features {
+            color: white;
+        }
+        .features h3 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .feature-list li {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .feature-list li:before {
+            content: "✓ ";
+            margin-right: 12px;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        .demo-creds {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            color: white;
+            font-size: 0.9rem;
+        }
+        .demo-creds h4 {
+            margin-top: 0;
+        }
+        .demo-creds p {
+            margin: 5px 0;
+            font-family: monospace;
+        }
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .features {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero-section">
+            <h1>EventLogic</h1>
+            <p>The Complete Event Planning Platform</p>
+        </div>
+
+        <div class="content-wrapper">
+            <div>
+                <div class="features">
+                    <h3>Welcome</h3>
+                    <ul class="feature-list">
+                        <li>Plan events with budget intelligence</li>
+                        <li>Get smart vendor recommendations</li>
+                        <li>Manage bookings and payments</li>
+                        <li>Vendor verification & management</li>
+                        <li>Complete event tracking</li>
+                        <li>Professional dashboard</li>
+                    </ul>
+                    <div class="demo-creds">
+                        <h4>Demo Credentials:</h4>
+                        <p><strong>Admin:</strong> admin@eventlogic.com / admin123</p>
+                        <p><strong>Customer:</strong> customer@eventlogic.com / customer123</p>
+                        <p style="margin-bottom: 0;"><strong>Vendor:</strong> vendor1@eventlogic.com / vendor123</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-box">
+                <h2>Login</h2>
+                <form method="POST" action="/login">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Login As</label>
+                        <select id="role" name="role" required>
+                            <option value="">-- Select Role --</option>
+                            <option value="admin">Admin</option>
+                            <option value="customer">Customer</option>
+                            <option value="vendor">Vendor</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn">Login</button>
+
+                    <div class="register-link">
+                        Don't have an account? <a href="/register">Register here</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if get_flashed_messages() %}
+    <script>
+        window.addEventListener('load', function() {
+            const messages = {{ get_flashed_messages(with_categories=true) | tojson }};
+            messages.forEach(function([category, message]) {
+                console.log(category + ': ' + message);
+            });
+        });
+    </script>
+    {% endif %}
+</body>
+</html>

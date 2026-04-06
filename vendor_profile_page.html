@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ vendor.vendor_name }} - EventLogic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .navbar h1 { font-size: 28px; cursor: pointer; }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+        .navbar a:hover { background: rgba(255,255,255,0.2); }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .hero p {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .rating {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 18px;
+        }
+        
+        .stars {
+            color: #ffc107;
+            letter-spacing: 2px;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-size: 22px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .info-label {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .info-value {
+            color: #555;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .service-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        
+        .service-emoji {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .service-name {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .service-price {
+            color: #667eea;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .review {
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .review-name {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .review-rating {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        
+        .review-title {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .review-comment {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .review-date {
+            color: #999;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        .no-reviews {
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            padding: 40px;
+            text-align: center;
+            border-radius: 8px;
+            color: #999;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/customer/dashboard" style="color: white; text-decoration: none; margin-left: 0;"><h1 style="margin: 0;">EventLogic</h1></a>
+        <div>
+            <a href="/customer/dashboard">Dashboard</a>
+            <a href="/customer/vendors">Browse Vendors</a>
+            <a href="/customer/budget-calculator">Budget</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="hero">
+        <h1>{{ vendor.vendor_name }}</h1>
+        <p>{{ vendor.description or 'Professional Event Service Provider' }}</p>
+        {% if vendor.rating > 0 %}
+        <div class="rating">
+            <span class="stars">{% for i in range(vendor.rating|int) %}★{% endfor %}{% for i in range(5 - (vendor.rating|int)) %}☆{% endfor %}</span>
+            <span>{{ vendor.rating|round(1) }}/5.0</span>
+        </div>
+        {% else %}
+        <div class="rating">
+            <span>No ratings yet</span>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="container">
+        <div class="grid">
+            <!-- Left Column: Services -->
+            <div>
+                <div class="card">
+                    <h2>📦 Services</h2>
+                    
+                    {% if services %}
+                        <div class="services-grid">
+                            {% for service in services %}
+                            <div class="service-card">
+                                <div class="service-emoji">
+                                    {% if service.photo_url and service.photo_url|length < 5 %}
+                                        {{ service.photo_url }}
+                                    {% else %}
+                                        {% if service.category == 'venue' %}🏛️
+                                        {% elif service.category == 'catering' %}🍽️
+                                        {% elif service.category == 'photography' %}📷
+                                        {% elif service.category == 'decoration' %}🌹
+                                        {% elif service.category == 'music' %}🎵
+                                        {% else %}⭐{% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="service-name">{{ service.service_name }}</div>
+                                {% if service.description %}
+                                    <p style="color: #666; font-size: 12px; margin-bottom: 10px;">{{ service.description }}</p>
+                                {% endif %}
+                                <div class="service-price">${{ "%.2f" % service.price }}</div>
+                                <form method="POST" action="/customer/book-service/{{ service.id }}" style="margin-top: 12px;">
+                                    <button type="submit" class="btn" style="width: 100%; margin-top: 0;">Book</button>
+                                </form>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p style="color: #999;">No services listed yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Right Column: Reviews & Info -->
+            <div>
+                <!-- Vendor Info -->
+                <div class="card" style="margin-bottom: 30px;">
+                    <h2>ℹ️ About</h2>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Total Bookings:</span>
+                        <span class="info-value">{{ vendor.total_bookings }}</span>
+                    </div>
+                    
+                    {% if vendor.city %}
+                    <div class="info-item">
+                        <span class="info-label">Location:</span>
+                        <span class="info-value">{{ vendor.city }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if vendor.phone %}
+                    <div class="info-item">
+                        <span class="info-label">Phone:</span>
+                        <span class="info-value">{{ vendor.phone }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if vendor.address %}
+                    <div class="info-item">
+                        <span class="info-label">Address:</span>
+                        <span class="info-value">{{ vendor.address }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Reviews -->
+                <div class="card">
+                    <h2>⭐ Customer Reviews</h2>
+                    
+                    {% if reviews %}
+                        {% for review in reviews %}
+                        <div class="review">
+                            <div class="review-header">
+                                <span class="review-name">{{ review.customer.name if review.customer else 'Anonymous' }}</span>
+                                <span class="review-rating">
+                                    {% for i in range(review.rating|int) %}★{% endfor %}{% for i in range(5 - (review.rating|int)) %}☆{% endfor %}
+                                    {{ review.rating }}
+                                </span>
+                            </div>
+                            {% if review.title %}
+                            <div class="review-title">{{ review.title }}</div>
+                            {% endif %}
+                            {% if review.comment %}
+                            <div class="review-comment">{{ review.comment }}</div>
+                            {% endif %}
+                            <div class="review-date">{{ review.created_at.strftime('%B %d, %Y') }}</div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-reviews">
+                            <p>👏 No reviews yet</p>
+                            <p style="font-size: 14px; margin-top: 10px;">Be the first to leave a review!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <a href="/customer/vendors" class="btn">← Back to Vendors</a>
+    </div>
+</body>
+</html>

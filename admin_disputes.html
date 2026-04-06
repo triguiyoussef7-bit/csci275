@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disputes - EventLogic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .section { background: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .section h2 { color: #333; margin-bottom: 20px; }
+        .dispute-item { background: #f9f9f9; padding: 20px; margin-bottom: 15px; border-radius: 4px; border-left: 4px solid #dc3545; }
+        .dispute-info { color: #666; font-size: 14px; margin: 5px 0; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+        .btn { background: #667eea; color: white; padding: 10px 16px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>EventLogic - Admin</h1>
+        <div>
+            <a href="/admin/vendors">Manage Vendors</a>
+            <a href="/admin/disputes">Disputes</a>
+            <a href="/admin/reports">Reports</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <h2>Active Disputes</h2>
+            
+            {% if disputes %}
+                {% for dispute in disputes %}
+                    <div class="dispute-item">
+                        <div class="dispute-info"><strong>Status:</strong> {{ dispute.status.upper() }}</div>
+                        <div class="dispute-info"><strong>Reported:</strong> {{ dispute.filed_date.strftime('%B %d, %Y') if dispute.filed_date else 'N/A' }}</div>
+                        {% if dispute.resolution_date %}<div class="dispute-info"><strong>Resolved:</strong> {{ dispute.resolution_date.strftime('%B %d, %Y') }}</div>{% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No active disputes.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <a href="/admin/dashboard" class="btn">Back to Dashboard</a>
+    </div>
+</body>
+</html>

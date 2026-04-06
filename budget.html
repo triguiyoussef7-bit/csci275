@@ -1,0 +1,295 @@
+{% extends "layout.html" %}
+
+{% block title %}Plan Your Event by Budget - Event Planner{% endblock %}
+
+{% block content %}
+<div class="budget-hero">
+    <div class="container">
+        <h1>💰 Plan Your Event by Budget</h1>
+        <p>Enter your budget and we'll show you event options perfect for your needs</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="budget-form-container">
+        <form id="budget-form" class="event-form">
+            <div class="form-group">
+                <label for="budget">Your Budget <span class="required">*</span></label>
+                <div class="budget-input-wrapper">
+                    <span class="currency-symbol">$</span>
+                    <input 
+                        type="number" 
+                        id="budget" 
+                        name="budget" 
+                        required 
+                        placeholder="e.g., 5000" 
+                        min="50"
+                        max="10000"
+                        step="50"
+                    />
+                </div>
+                <p class="budget-hint">Budget range: $100 - $10,000</p>
+            </div>
+
+            <div class="budget-range-display">
+                <div class="range-label">Budget Range:</div>
+                <div class="range-slider-container">
+                    <input type="range" id="budget-slider" min="100" max="10000" value="5000" step="50" class="range-slider">
+                    <div class="range-value">
+                        $<span id="range-value">5000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="error-message" class="alert alert-error" style="display: none;"></div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-large">
+                🔍 Find Events
+            </button>
+        </form>
+
+        <div class="budget-info">
+            <h3>Popular Budget Ranges</h3>
+            <div class="budget-chips">
+                <button type="button" class="budget-chip" data-budget="500">
+                    💡 Small Event<br><small>$500</small>
+                </button>
+                <button type="button" class="budget-chip" data-budget="2000">
+                    🎉 Medium Event<br><small>$2,000</small>
+                </button>
+                <button type="button" class="budget-chip" data-budget="5000">
+                    ✨ Large Event<br><small>$5,000</small>
+                </button>
+                <button type="button" class="budget-chip" data-budget="10000">
+                    💎 Premium Event<br><small>$10,000</small>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.budget-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: var(--white);
+    padding: var(--space-2xl) var(--space-md);
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+}
+
+.budget-hero h1 {
+    color: var(--white);
+    margin-bottom: var(--space-sm);
+    font-size: var(--font-size-4xl);
+}
+
+.budget-hero p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: var(--font-size-lg);
+    margin: 0;
+}
+
+.budget-form-container {
+    max-width: 600px;
+    margin: 0 auto var(--space-2xl);
+    background: var(--white);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+}
+
+.budget-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: var(--space-sm);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.budget-input-wrapper input {
+    padding-left: var(--space-lg) !important;
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+}
+
+.budget-hint {
+    font-size: var(--font-size-xs);
+    color: var(--gray);
+    margin-top: var(--space-xs) !important;
+    margin-bottom: 0;
+}
+
+.budget-range-display {
+    margin: var(--space-lg) 0;
+    padding: var(--space-md);
+    background: var(--light);
+    border-radius: var(--radius-md);
+}
+
+.range-label {
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    color: var(--dark);
+}
+
+.range-slider-container {
+    position: relative;
+    padding-bottom: var(--space-md);
+}
+
+.range-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--light-border);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+}
+
+.range-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: none;
+    box-shadow: var(--shadow-md);
+}
+
+.range-value {
+    position: absolute;
+    right: 0;
+    top: -30px;
+    background: var(--primary);
+    color: var(--white);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+}
+
+.btn-large {
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--font-size-lg);
+    margin-top: var(--space-md);
+}
+
+.budget-info {
+    margin-top: var(--space-2xl);
+    text-align: center;
+}
+
+.budget-info h3 {
+    margin-bottom: var(--space-lg);
+    color: var(--dark);
+}
+
+.budget-chips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-md);
+}
+
+.budget-chip {
+    padding: var(--space-md);
+    border: 2px solid var(--light-border);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: var(--font-size-sm);
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.budget-chip:hover {
+    border-color: var(--primary);
+    background: var(--light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.budget-chip small {
+    display: block;
+    color: var(--primary);
+    font-weight: 700;
+    margin-top: var(--space-xs);
+}
+
+@media (max-width: 768px) {
+    .budget-form-container {
+        padding: var(--space-md);
+    }
+
+    .budget-chips {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+
+<script>
+// Sync slider with input
+const budgetInput = document.getElementById('budget');
+const budgetSlider = document.getElementById('budget-slider');
+const rangeValue = document.getElementById('range-value');
+
+budgetSlider.addEventListener('input', (e) => {
+    budgetInput.value = e.target.value;
+    rangeValue.textContent = e.target.value;
+});
+
+budgetInput.addEventListener('input', (e) => {
+    if (e.target.value) {
+        budgetSlider.value = e.target.value;
+        rangeValue.textContent = e.target.value;
+    }
+});
+
+// Budget chips
+document.querySelectorAll('.budget-chip').forEach(chip => {
+    chip.addEventListener('click', (e) => {
+        e.preventDefault();
+        const budget = chip.dataset.budget;
+        budgetInput.value = budget;
+        budgetSlider.value = budget;
+        rangeValue.textContent = budget;
+        budgetInput.focus();
+    });
+});
+
+// Form submission
+document.getElementById('budget-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const budget = budgetInput.value.trim();
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.style.display = 'none';
+
+    if (!budget || budget <= 0 || budget < 100 || budget > 10000) {
+        errorDiv.textContent = '❌ Please enter a budget between $100 and $10,000';
+        errorDiv.style.display = 'block';
+        return;
+    }
+
+    // Redirect to suggestions page
+    window.location.href = `/suggestions?budget=${budget}`;
+});
+</script>
+{% endblock %}

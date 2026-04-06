@@ -1,0 +1,174 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Event - Event Planner{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    {% if event_type and event_type != 'custom' %}
+    <div class="form-hero">
+        <h1>{{ template.get('icon', '✨') }} {{ template.get('name', 'Create Event') }}</h1>
+        <p>{{ template.get('description', 'Plan your event') }}</p>
+    </div>
+    {% else %}
+    <h1>✨ Create New Event</h1>
+    {% endif %}
+
+    <form id="event-form">
+        <div class="form-group">
+            <label for="title">Event Title <span class="required">*</span></label>
+            <input type="text" id="title" name="title" required placeholder="e.g., Team Meeting, Birthday Party" />
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" placeholder="Add details about your event..."></textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="date">Date <span class="required">*</span></label>
+                <input type="date" id="date" name="date" required />
+            </div>
+
+            <div class="form-group">
+                <label for="time">Time <span class="required">*</span></label>
+                <input type="time" id="time" name="time" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category <span class="required">*</span></label>
+            <input type="text" id="category" name="category" required placeholder="e.g., Meeting, Birthday, Conference, Work" {% if template %}value="{{ template.get('name', '') }}"{% endif %} />
+        </div>
+
+        <div class="form-group">
+            <label for="budget">Budget (USD)</label>
+            <div class="budget-input-wrapper">
+                <span class="currency-symbol">$</span>
+                <input type="number" id="budget" name="budget" placeholder="e.g., 5000" min="0" step="50" />
+            </div>
+        </div>
+
+        <div id="error-message" class="alert alert-error" style="display: none;"></div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-block">Create Event</button>
+            <a href="/" class="btn btn-secondary btn-block">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.form-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: var(--white);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-lg);
+    text-align: center;
+}
+
+.form-hero h1 {
+    color: var(--white);
+    margin-bottom: var(--space-sm);
+    font-size: var(--font-size-2xl);
+}
+
+.form-hero p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+
+.budget-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: var(--space-sm);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.budget-input-wrapper input {
+    padding-left: var(--space-lg) !important;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventType = urlParams.get('type') || 'custom';
+    const eventBudget = urlParams.get('budget') || '';
+
+    // Pre-fill budget if provided
+    if (eventBudget) {
+        document.getElementById('budget').value = eventBudget;
+    }
+
+    document.getElementById('event-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById('title').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+        const category = document.getElementById('category').value.trim();
+        const budget = parseFloat(document.getElementById('budget').value) || 0;
+
+        const errorDiv = document.getElementById('error-message');
+        errorDiv.style.display = 'none';
+
+        if (!title || !date || !time || !category) {
+            showError('Please fill in all required fields (*)', errorDiv);
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/events', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    date,
+                    time,
+                    category,
+                    budget: budget,
+                    event_type: eventType
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Clear localStorage
+                localStorage.removeItem('selectedEventType');
+                localStorage.removeItem('selectedEventName');
+                localStorage.removeItem('selectedBudget');
+                
+                alert('✅ Event created successfully!');
+                window.location.href = '/';
+            } else if (response.status === 409) {
+                showError(`⚠️ Time Conflict: An event already exists at ${date} ${time}`, errorDiv);
+            } else {
+                showError('❌ ' + (result.error || 'Failed to create event'), errorDiv);
+            }
+        } catch (error) {
+            console.error('Error creating event:', error);
+            showError('❌ Failed to create event', errorDiv);
+        }
+    });
+
+    function showError(message, errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        window.scrollTo(0, 0);
+    }
+</script>
+{% endblock %}
